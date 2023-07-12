@@ -1,41 +1,35 @@
 
-let selectAll = document.getElementById("all");
-commonNames(countries);
+// let insertIdToBody = document.querySelector("body");
+// insertIdToBody.id = "root"
 
-function commonNames(countries) {
-  let countrieNames =  []
+getCommonNames(countries);
+
+
+function getCommonNames(inputCountries) {
+  let countryNameList = [];
   
-  for (let i = 0; i < countries.length; i++) {
-    const country = countries[i];
-    const name = country.name.common;
-    console.log(name)
-    countrieNames.push(name)
-  }
-  createOption(countrieNames, countries)
-}
+  inputCountries.forEach(country => {
+   //console.log(country);
+  
+   let names = country["name"]
+   countryNameList.push(names.common)
 
-
-function createOption(nameArray, countries) {
-  nameArray.forEach((countryName) => {
-    let options = document.createElement("option");
-    options.textContent = countryName;
-
-    options.addEventListener("click", (e) => {
-      detailsOfSelectedCountry(countries)
-    })
-
-    //does not work 
-    selectAll.appendChild(options);
-    
-    
-    
   });
-  return options
-  
-
+  createUnorderedList(countryNameList)
+  console.log(countryNameList)
+  return countryNameList
 }
 
-function detailsOfSelectedCountry(names) {
-  console.log(countries)
-  
+
+function createUnorderedList(inputList) {
+  const list = document.createElement('ul');
+
+  inputList.forEach(names => {
+    const li = document.createElement('li');
+    li.textContent = names
+    list.appendChild(li)
+  });
+  const inject = document.querySelector('all');
+  inject.appendChild(list)
+
 }
