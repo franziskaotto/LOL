@@ -11,24 +11,17 @@ const loadEvent = function() {
 
 
   getCommonNames(countries);
-  //getRestOfCountry(countries);
-
 
   function getCommonNames(inputCountries) {
     let countryNameList = [];
-
     
     inputCountries.forEach(country => {
-      //console.log(country);
-      //array
       let names = country["name"]
       countryNameList.push(names.common)
     });
     //createUnorderedList(countryNameList)
 
     createOptions(countryNameList)
-    //console.log(countryNameList)
-    
     return countryNameList
   }
 
@@ -84,19 +77,16 @@ const loadEvent = function() {
         //capital
         let capital = country.capital[0];
         capitalCity.push(capital);
-        
       }
-      
-      
     };
     createFlagImageElement(flag);
     createH1Element(commonName);
     createH2Element(region);
     createh3Element(subRegion);
     createh4Element(capitalCity);
-    
   }
 
+  
   function createFlagImageElement(flag) {
     let flagElement = document.createElement("img");
     flagElement.src = flag;
