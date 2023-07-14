@@ -9,16 +9,16 @@ const loadEvent = function() {
   let all = document.getElementById("all")
   let countryElement = document.getElementById("country")
 
-  //hide both buttons (population, area) for task 3
   let populationElement = document.getElementById("population");
   let areaElement = document.getElementById("area");
-
+  
+  //hide both buttons (population, area) for task 3
   populationElement.style.visibility = "hidden";
   areaElement.style.visibility = "hidden";
 
   getCommonNames(countries);
-
-
+  createEventListenerPopulation ()
+  
   function getCommonNames(inputCountries) {
     let countryNameList = [];
     
@@ -66,12 +66,16 @@ const loadEvent = function() {
     let region = [];                //h2
     let subRegion = [];             //h3
     let capitalCity = [];           //h4
+    let listAllBorders = []         //
 
     makeButtonsVisible()
+    
+    
     
     for(let country of countries) {
       
       if (country.name.common === countryName) {
+        
         //flag
         let flags = country.flags.png;
         flag.push(flags);
@@ -93,10 +97,23 @@ const loadEvent = function() {
         capitalCity.push(capital);
 
         //get borders
+       
         if(country.borders) {
-
           let borderArray = country.borders
+          let countryCode = country.cca2
+          console.log(countryCode)
+
+          borderArray.forEach(border => {
+            console.log(border)
+            if(border === country["cca2"]) {
+              console.log(country.name.common)
+            }
+          });
+
+          //getNeighbourCountryLargestPopulation(borderArray, countryCode)
           console.log(borderArray)
+          
+
         } else {
           createThereIsNoBorder(country)
         }
@@ -157,6 +174,30 @@ const loadEvent = function() {
     noBorder.innerHTML = `${country.name.common} has no direct neighbour.`
     countryElement.appendChild(noBorder)
 
+  }
+  function createEventListenerPopulation () {
+    populationElement.addEventListener("click", (e) => {
+      console.log("click happend")
+    })
+  }
+
+  function getNeighbourCountryLargestPopulation (borderArray, countryCode) {
+    console.log("HERE");
+
+    let listAllBorders = []
+    countries.forEach(country => {
+
+      console.log(countryCode);
+      for (let i = 0; i < borderArray.length; i++) {
+        if (countryCode === borderArray[i]) {
+          listAllBorders.push(country.name.common)
+
+        }
+      }
+      
+    });
+    console.log(listAllBorders)
+    
   }
 
  /* function getNeighbourCountryLargestPopulation (countries) {
