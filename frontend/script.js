@@ -66,7 +66,6 @@ const loadEvent = function() {
     let region = [];                //h2
     let subRegion = [];             //h3
     let capitalCity = [];           //h4
-    let listAllBorders = []         //
 
     makeButtonsVisible()
     
@@ -100,22 +99,9 @@ const loadEvent = function() {
        
         if(country.borders) {
           let borderArray = country.borders
-          let countryCode = country.cca2
-          console.log(countryCode)
-
-          borderArray.forEach(border => {
-            console.log(border)
-            if(border === country["cca2"]) {
-              console.log(country.name.common)
-            }
-          });
-
-          //getNeighbourCountryLargestPopulation(borderArray, countryCode)
-          console.log(borderArray)
-          
-
+          getNeighbourCountryLargestPopulation(borderArray)
         } else {
-          createThereIsNoBorder(country)
+          thereIsNoBorder(country)
         }
 
         //getNeighbourCountryLargestPopulation(countries)
@@ -169,7 +155,7 @@ const loadEvent = function() {
     countryElement.appendChild(h4Element);
   }
 
-  function createThereIsNoBorder (country) {
+  function thereIsNoBorder (country) {
     let noBorder = document.createElement("div");
     noBorder.innerHTML = `${country.name.common} has no direct neighbour.`
     countryElement.appendChild(noBorder)
@@ -178,27 +164,33 @@ const loadEvent = function() {
   function createEventListenerPopulation () {
     populationElement.addEventListener("click", (e) => {
       console.log("click happend")
+
     })
   }
 
-  function getNeighbourCountryLargestPopulation (borderArray, countryCode) {
-    console.log("HERE");
+  function getNeighbourCountryLargestPopulation (borders) {
+    // console.log("HERE");
+    // console.log(borders + " + border")
+    // console.log(countryCode + " + countryCode")
 
-    let listAllBorders = []
+    let borderLandWithHighestPopulation = [];
+    let highestPopulation = countries[0].population
     countries.forEach(country => {
-
-      console.log(countryCode);
-      for (let i = 0; i < borderArray.length; i++) {
-        if (countryCode === borderArray[i]) {
-          listAllBorders.push(country.name.common)
+      
+      borders.forEach(border => {
+        if (country["cca3"] === border) {
+          borderLandWithHighestPopulation.push(country.name.common)
+          //endet here: start calculation of highest pop
 
         }
-      }
+        
+      });
       
     });
-    console.log(listAllBorders)
-    
+    console.log(borderLandWithHighestPopulation)
   }
+
+
 
  /* function getNeighbourCountryLargestPopulation (countries) {
     let listAllBorders = []
