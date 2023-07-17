@@ -151,7 +151,7 @@ const loadEvent = function() {
   function createh4Element(capital) {
     let h4Element = document.createElement("h4");
     h4Element.innerHTML = "Capital: " + capital;
-    h4Element.style.visibility = "visible";
+    h4Element.stymle.visibility = "visible";
     countryElement.appendChild(h4Element);
   }
 
@@ -170,24 +170,31 @@ const loadEvent = function() {
 
   function getNeighbourCountryLargestPopulation (borders) {
     // console.log("HERE");
-    // console.log(borders + " + border")
+    console.log(borders + " + border")
     // console.log(countryCode + " + countryCode")
 
-    let borderLandWithHighestPopulation = [];
-    let highestPopulation = countries[0].population
+    let populationObject= {};
+    let highestPopulation = countries[0].population;
+    
+
     countries.forEach(country => {
       
       borders.forEach(border => {
         if (country["cca3"] === border) {
-          borderLandWithHighestPopulation.push(country.name.common)
+          populationObject.population = country.population
           //endet here: start calculation of highest pop
-
+          if(populationObject.population > highestPopulation) {
+            highestPopulation = country.name.common
+          }
         }
+
         
       });
       
+     
     });
-    console.log(borderLandWithHighestPopulation)
+    console.log(populationObject)
+    console.log(highestPopulation)
   }
 
 
