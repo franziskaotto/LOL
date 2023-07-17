@@ -21,7 +21,13 @@ function listAllCountries (countriesArr){
       details.insertAdjacentHTML("beforeend", element("h1", selectedCountry.name.common))
       details.insertAdjacentHTML("beforeend", element("h2", selectedCountry.region))
       details.insertAdjacentHTML("beforeend", element("h3", selectedCountry.subregion))
-      details.insertAdjacentHTML("beforeend", element("h3", selectedCountry.subregion))
+
+      if (selectedCountry.capital.length === 1){
+        details.insertAdjacentHTML("beforeend", element("h4", selectedCountry.capital[0]))
+      }
+      else { //Antarctia has issues --> is empty
+        details.insertAdjacentHTML("beforeend", element("h4", "There is no capital listed."))
+      }
     }
   })
 }
