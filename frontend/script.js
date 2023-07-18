@@ -66,6 +66,7 @@ const loadEvent = function() {
     let region = [];                //h2
     let subRegion = [];             //h3
     let capitalCity = [];           //h4
+    
 
     makeButtonsVisible()
     
@@ -98,7 +99,7 @@ const loadEvent = function() {
         //get borders
        
         if(country.borders) {
-          let borderArray = country.borders
+          let borderArray = country.borders;
           getNeighbourCountryLargestPopulation(borderArray)
         } else {
           thereIsNoBorder(country)
@@ -112,6 +113,41 @@ const loadEvent = function() {
     createH2Element(region);
     createh3Element(subRegion);
     createh4Element(capitalCity);
+  }
+
+
+  function getNeighbourCountryLargestPopulation (borders) {
+    let populationObject= [];
+
+    for (let country of countries) {
+      for (let border of borders ) {
+        if (country["cca3"] === border) {
+          let obj = {}
+          obj.name = country.name.common;
+          obj.pop = country.population;
+          populationObject.push(obj);
+        }
+      };
+    };
+    console.log(populationObject)
+    
+    let slicedObj = populationObject.slice(0);
+    slicedObj.sort(function(a, b) {
+      return b.pop - a.pop
+    })
+    let highestPopulation = slicedObj[0].name
+    
+    console.log(slicedObj)
+    console.log(highestPopulation)
+    return highestPopulation
+    
+  }
+
+  function thereIsNoBorder (country) {
+    let noBorder = document.createElement("div");
+    noBorder.innerHTML = `${country.name.common} has no direct neighbour.`
+    countryElement.appendChild(noBorder)
+
   }
 
 
@@ -155,12 +191,7 @@ const loadEvent = function() {
     countryElement.appendChild(h4Element);
   }
 
-  function thereIsNoBorder (country) {
-    let noBorder = document.createElement("div");
-    noBorder.innerHTML = `${country.name.common} has no direct neighbour.`
-    countryElement.appendChild(noBorder)
-
-  }
+ 
   function createEventListenerPopulation () {
     populationElement.addEventListener("click", (e) => {
       console.log("click happend")
@@ -168,34 +199,6 @@ const loadEvent = function() {
     })
   }
 
-  function getNeighbourCountryLargestPopulation (borders) {
-    // console.log("HERE");
-    console.log(borders + " + border")
-    // console.log(countryCode + " + countryCode")
-
-    let populationObject= {};
-    let highestPopulation = countries[0].population;
-    
-
-    countries.forEach(country => {
-      
-      borders.forEach(border => {
-        if (country["cca3"] === border) {
-          populationObject.population = country.population
-          //endet here: start calculation of highest pop
-          if(populationObject.population > highestPopulation) {
-            highestPopulation = country.name.common
-          }
-        }
-
-        
-      });
-      
-     
-    });
-    console.log(populationObject)
-    console.log(highestPopulation)
-  }
 
 
 
