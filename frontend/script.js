@@ -2,22 +2,18 @@
 
 const loadEvent = function() {
 
-  //try for me if connection between HTML and JS works
-  let insertIdToBody = document.querySelector("body");
-  insertIdToBody.id = "root"
-
   let all = document.getElementById("all")
   let countryElement = document.getElementById("country")
 
   let populationElement = document.getElementById("population");
   let areaElement = document.getElementById("area");
-  
+
   //hide both buttons (population, area) for task 3
-  populationElement.style.visibility = "hidden";
-  areaElement.style.visibility = "hidden";
+  populationElement.style.display = "none";
+  areaElement.style.display = "none";
 
   getCommonNames(countries);
-  createEventListenerPopulation ()
+  
   
   function getCommonNames(inputCountries) {
     let countryNameList = [];
@@ -58,7 +54,10 @@ const loadEvent = function() {
     countryElement.appendChild(createOneCountryFromObject(oneCountryName));
     
     
+    
   }
+  populationElement.addEventListener("click", createOneCountryFromObject)  
+    
 
   function createOneCountryFromObject(countryName) {
     let flag = [];                  //img
@@ -137,7 +136,7 @@ const loadEvent = function() {
     })
     let highestPopulation = slicedObj[0].name
     
-    console.log(slicedObj)
+    createPopulationElement(highestPopulation)  
     console.log(highestPopulation)
     return highestPopulation
     
@@ -150,54 +149,61 @@ const loadEvent = function() {
 
   }
 
+  
+
+
+  
+
+
+ 
 
   function makeButtonsVisible() {
-    populationElement = document.getElementById("population").style.visibility = "visible";
-    areaElement = document.getElementById("area").style.visibility = "visible";
+    populationElement = document.getElementById("population").style.display = "inline";
+    areaElement = document.getElementById("area").style.display = "inline";
   }
   
   function createFlagImageElement(flag) {
     let flagElement = document.createElement("img");
     flagElement.src = flag;
-    flagElement.style.visibility = "visible";
+    flagElement.style.display = "block";
     countryElement.appendChild(flagElement);
   };
 
   function createH1Element(commonName) {
     let h1Element = document.createElement("h1");
     h1Element.innerHTML = commonName;
-    h1Element.style.visibility = "visible";
+    h1Element.style.display = "block";
     countryElement.appendChild(h1Element);
   };
 
   function createH2Element(region) {
     let h2Element = document.createElement("h2");
     h2Element.innerHTML = "Region: " + region;
-    h2Element.style.visibility = "visible";
+    h2Element.style.display = "block";
     countryElement.appendChild(h2Element);
   };
 
   function createh3Element(sub) {
     let h3Element = document.createElement("h3"); 
     h3Element.innerHTML = "Subregion: " + sub;
-    h3Element.style.visibility = "visible";
+    h3Element.style.display = "block";
     countryElement.appendChild(h3Element);
   }
 
   function createh4Element(capital) {
     let h4Element = document.createElement("h4");
     h4Element.innerHTML = "Capital: " + capital;
-    h4Element.stymle.visibility = "visible";
+    h4Element.style.display = "block";
     countryElement.appendChild(h4Element);
   }
 
- 
-  function createEventListenerPopulation () {
-    populationElement.addEventListener("click", (e) => {
-      console.log("click happend")
-
-    })
+    //When the <button id="population"> element is clicked, the neighbor country with the largest population is displayed in the <main id="country"> element.
+  function createPopulationElement (country) {
+    let popElement = document.createElement("div");
+    popElement.innerHTML = country;
+    countryElement.appendChild(popElement)
   }
+  
 
 
 
