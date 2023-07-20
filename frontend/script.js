@@ -2,6 +2,8 @@ const selectElement = document.getElementById('all');
 const mainElement = document.getElementById('country');
 const populationBtn = document.getElementById('population');
 const areaBtn = document.getElementById('area');
+const previousBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
 
 window.onload = loadEvent();
 
@@ -20,15 +22,28 @@ function createCountryOptions() {
   selectElement.appendChild(initialOption);
 
   //Hide buttons at init
-  populationBtn.style.visibility= 'hidden';
-  areaBtn.style.visibility = 'hidden';
-
+  hideButtons();
+  
   countries.forEach((country) => {
     const optionElement = document.createElement("option");
     optionElement.value = country["name"]["common"];
     optionElement.textContent = country["name"]["common"];
     selectElement.appendChild(optionElement);
   });
+}
+
+function hideButtons() {
+  populationBtn.style.visibility= 'hidden';
+  areaBtn.style.visibility = 'hidden';
+  previousBtn.style.visibility = 'hidden';
+  nextBtn.style.visibility = 'hidden';
+}
+
+function displayButtons() {
+  populationBtn.style.visibility= 'visible';
+  areaBtn.style.visibility = 'visible';
+  previousBtn.style.visibility = 'visible';
+  nextBtn.style.visibility = 'visible';
 }
 
 function displayDetails() {
@@ -58,13 +73,11 @@ function displayDetails() {
       mainElement.appendChild(subregion);
 
       //display buttons when country is selected
-      populationBtn.style.visibility= 'visible';
-      areaBtn.style.visibility = 'visible';
+      displayButtons();
     } else {
       //Reset mainElement & hide buttons
       mainElement.innerHTML = null;       
-      populationBtn.style.visibility ='hidden';
-      areaBtn.style.visibility = 'hidden';
+      hideButtons();
     }
   })
 }
@@ -97,9 +110,9 @@ function biggestPop(selectedCountry) {
         largestPopulation = neighbouringCountry.population;
         largestNeighbour = neighbouringCountry;
       }
-      return largestNeighbour;
     }
   }
+  return largestNeighbour;
 } 
 
 //Largest population button
@@ -118,7 +131,7 @@ function makePopButtonClickable() {
     let largestNeighbour = biggestPop(selectedCountry);
 
     if (largestNeighbour) {
-      mainElement.innerHTML = `The neighbouring country of ${selectElement.value} with the biggest population is: <br> `
+      mainElement.innerHTML = `The neighbouring country of ${selectElement.value} with the largest population is: <br> `
 
       //Selected country in dropdown menu changes to neighbour with larges pop
       selectElement.value = largestNeighbour.name.common;
