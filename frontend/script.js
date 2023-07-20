@@ -10,7 +10,7 @@ function listAllCountries (countriesArr){
   const populationBtn = document.getElementById("population");
   const areaBtn = document.getElementById("area");
 
-  populationBtn.style.display = "none";
+  populationBtn.style.display = "none"; //don't know if that is allowed??
   areaBtn.style.display = "none";
 
   selectionE.innerHTML = "<option>--Select a country from the list--</option>";
@@ -50,22 +50,27 @@ function element (tag, inner) {
   return `<${tag}>${inner}</${tag}>`;
 }
 
+function flagElement(link) {
+  return `<img src=${link}>`;
+}
+
 function fillPage (selectedCountry, detailsE){
   detailsE.innerHTML = "";
-  detailsE.insertAdjacentHTML("beforeend", element("img", selectedCountry.flag)) //flag needs some worky work
-  detailsE.insertAdjacentHTML("beforeend", element("h1", selectedCountry.name.common))
-  detailsE.insertAdjacentHTML("beforeend", element("h2", selectedCountry.region))
+
+  detailsE.insertAdjacentHTML("beforeend", flagElement(selectedCountry.flags.png));
+  detailsE.insertAdjacentHTML("beforeend", element("h1", selectedCountry.name.common));
+  detailsE.insertAdjacentHTML("beforeend", element("h2", selectedCountry.region));
   
   if (typeof selectedCountry.subregion === "undefined"){
-    detailsE.insertAdjacentHTML("beforeend", element("h3", "There is no subregion listed."))
+    detailsE.insertAdjacentHTML("beforeend", element("h3", "There is no subregion listed."));
   } else {
-    detailsE.insertAdjacentHTML("beforeend", element("h3", selectedCountry.subregion))
+    detailsE.insertAdjacentHTML("beforeend", element("h3", selectedCountry.subregion));
   }
 
   if (typeof selectedCountry.capital === "undefined"){
-    detailsE.insertAdjacentHTML("beforeend", element("h4", "There is no capital listed."))
+    detailsE.insertAdjacentHTML("beforeend", element("h4", "There is no capital listed."));
   } else {
-    detailsE.insertAdjacentHTML("beforeend", element("h4", selectedCountry.capital[0]))
+    detailsE.insertAdjacentHTML("beforeend", element("h4", selectedCountry.capital[0]));
   }
 }
 
