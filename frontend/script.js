@@ -1,75 +1,67 @@
 
 const LISTOFCOUNTRIES = countries; //connection through index.html
 
+
 const loadEvent = function (){
   listAllCountries (LISTOFCOUNTRIES);
 }
 
 function listAllCountries (countriesArr){
   const selectionE = document.getElementById("all");
-  const details = document.getElementById("country");
+  const detailsE = document.getElementById("country");
+  const populationBtn = document.getElementById("population");
 
   selectionE.innerHTML = "<option>--Select a country from the list--</option>";
-  for (let country of countriesArr){
-    selectionE.insertAdjacentHTML("beforeend", element("option", country.name.common));
-  }
+  fillSelection(countriesArr, selectionE);
 
   selectionE.addEventListener("input", (e) =>{
     const selectedCountry = countriesArr.find(country => country.name.common === e.target.value);
-    details.innerHTML = "";
+    detailsE.innerHTML = "";
 
     if (selectedCountry){
-      details.insertAdjacentHTML("beforeend", element("img", selectedCountry.flag))
-      details.insertAdjacentHTML("beforeend", element("h1", selectedCountry.name.common))
-      details.insertAdjacentHTML("beforeend", element("h2", selectedCountry.region))
-      
-      
-      if (typeof selectedCountry.subregion === "undefined"){
-        details.insertAdjacentHTML("beforeend", element("h3", "There is no subregion listed."))
-      } else {
-        details.insertAdjacentHTML("beforeend", element("h3", selectedCountry.subregion))
-      }
-
-      if (typeof selectedCountry.capital === "undefined"){
-        details.insertAdjacentHTML("beforeend", element("h4", "There is no capital listed."))
-      } else {
-      details.insertAdjacentHTML("beforeend", element("h4", selectedCountry.capital[0]))
-      }
-
-      listLargestPopulation(selectedCountry);
+      fillPage(selectedCountry, detailsE);
     }
+    //need to add event listener for button
+    populationBtn.addEventListener("click", (e) =>{
+      let largestCountry = listLargestPopulation(selectedCountry, detailsE, selectionE);
+      selectionE.innerHTML = `<option>${largestCountry}</option>`;
+      fillSelection(countriesArr, selectionE);
+      listAllCountries (LISTOFCOUNTRIES)
+    })
   })
 }
 
-function listLargestPopulation (country){
-  if (country.hasOwnProperty("borders")){ //if there are neighbouring countries, start the search
-    let largest = getLargestNeighbour (country);
+function fillSelection (countriesArr, selectionE){
+  for (let country of countriesArr){
+    selectionE.insertAdjacentHTML("beforeend", element("option", country.name.common));
   }
-  else  {
-    console.log("Country has no neighbouring countries."); //later displayed on website
-  }
-
 }
 
-//need to add event listener for button
+function listLargestPopulation (country, detailsE, selectionE){
+  if (country.hasOwnProperty("borders")){ //if there are neighbouring countries, start the search
+    let largestNeighbour = getLargestNeighbour (country);
+    fillPage(largestNeighbour, detailsE);
+    return largestNeighbour.name.common;
+  }
+  else  {
+    detailsE.innerHTML = "";
+    detailsE.insertAdjacentHTML("beforeend", element("h1", "Country has no neighbouring countries."));
+    
+  }
+}
+
 function getLargestNeighbour (country){
-
-  //need to check in the borders array every population if the population is the biggest
-
-  //loop over borders array - done
-  //take the fifa code to find the country in the country list - done
-  //save the population in a temp variable
-  //return country with the biggest population
-  
-
   for (let neighbourCCA3 of country.borders){ //i get the cca3 of the borders array
     let neededCountry = findCountry(neighbourCCA3);
-    let tempPopulation = 0;
-    let largest;
-
-    //console.log(neededCountry);
+    let tempPopulation = neededCountry.population;
+    let largestNeighbour = neededCountry;
+    
+    if (tempPopulation < neededCountry.population){
+      largestNeighbour = neededCountry;
+      tempPopulation = neededCountry.population
+    }
+    return largestNeighbour;
   }
-
 }
 
 function findCountry (cca3){
@@ -82,6 +74,25 @@ function findCountry (cca3){
 
 function element (tag, inner) {
   return `<${tag}>${inner}</${tag}>`;
+}
+
+function fillPage (selectedCountry, detailsE){
+  detailsE.innerHTML = "";
+  detailsE.insertAdjacentHTML("beforeend", element("img", selectedCountry.flag)) //flag needs some worky work
+  detailsE.insertAdjacentHTML("beforeend", element("h1", selectedCountry.name.common))
+  detailsE.insertAdjacentHTML("beforeend", element("h2", selectedCountry.region))
+  
+  if (typeof selectedCountry.subregion === "undefined"){
+    detailsE.insertAdjacentHTML("beforeend", element("h3", "There is no subregion listed."))
+  } else {
+    detailsE.insertAdjacentHTML("beforeend", element("h3", selectedCountry.subregion))
+  }
+
+  if (typeof selectedCountry.capital === "undefined"){
+    detailsE.insertAdjacentHTML("beforeend", element("h4", "There is no capital listed."))
+  } else {
+    detailsE.insertAdjacentHTML("beforeend", element("h4", selectedCountry.capital[0]))
+  }
 }
 
 window.addEventListener("load", loadEvent);
