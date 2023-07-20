@@ -5,15 +5,20 @@ const loadEvent = function() {
   let all = document.getElementById("all")
   let countryElement = document.getElementById("country")
 
-  let populationElement = document.getElementById("population");
+  let populationButton = document.getElementById("population");
   let areaElement = document.getElementById("area");
+  
+ 
 
   //hide both buttons (population, area) for task 3
-  populationElement.style.display = "none";
+  populationButton.style.display = "none";
   areaElement.style.display = "none";
 
   getCommonNames(countries);
   
+ populationButton.addEventListener("click", (e) => {
+  console.log("Click happend")
+ })
   
   function getCommonNames(inputCountries) {
     let countryNameList = [];
@@ -22,7 +27,7 @@ const loadEvent = function() {
       let names = country["name"]
       countryNameList.push(names.common)
     });
-    //createUnorderedList(countryNameList)
+    
 
     createOptions(countryNameList)
     return countryNameList
@@ -39,6 +44,7 @@ const loadEvent = function() {
 
     all.addEventListener("change", (e) => {
       showOneCountry(e.target.value);
+      console.log(e)
     });
 
     if (!all){ //document.queryselector
@@ -48,16 +54,12 @@ const loadEvent = function() {
     }
   }
 
-  function showOneCountry(oneCountryName) {
-    //need to have it to clear the Page
+  function showOneCountry (oneCountryName) {
     countryElement.innerHTML = ""
     countryElement.appendChild(createOneCountryFromObject(oneCountryName));
-    
-    
-    
   }
-  populationElement.addEventListener("click", createOneCountryFromObject)  
-    
+   
+   
 
   function createOneCountryFromObject(countryName) {
     let flag = [];                  //img
@@ -65,16 +67,11 @@ const loadEvent = function() {
     let region = [];                //h2
     let subRegion = [];             //h3
     let capitalCity = [];           //h4
-    
 
     makeButtonsVisible()
     
-    
-    
     for(let country of countries) {
-      
       if (country.name.common === countryName) {
-        
         //flag
         let flags = country.flags.png;
         flag.push(flags);
@@ -96,15 +93,13 @@ const loadEvent = function() {
         capitalCity.push(capital);
 
         //get borders
-       
+        
         if(country.borders) {
           let borderArray = country.borders;
           getNeighbourCountryLargestPopulation(borderArray)
         } else {
           thereIsNoBorder(country)
         }
-
-        //getNeighbourCountryLargestPopulation(countries)
       }
     };
     createFlagImageElement(flag);
@@ -136,11 +131,16 @@ const loadEvent = function() {
     })
     let highestPopulation = slicedObj[0].name
     
-    createPopulationElement(highestPopulation)  
+    createPopulationElement(highestPopulation) 
+    
+   
+
     console.log(highestPopulation)
     return highestPopulation
     
   }
+ 
+  
 
   function thereIsNoBorder (country) {
     let noBorder = document.createElement("div");
@@ -149,16 +149,8 @@ const loadEvent = function() {
 
   }
 
-  
-
-
-  
-
-
- 
-
   function makeButtonsVisible() {
-    populationElement = document.getElementById("population").style.display = "inline";
+    populationButton = document.getElementById("population").style.display = "inline";
     areaElement = document.getElementById("area").style.display = "inline";
   }
   
@@ -197,7 +189,7 @@ const loadEvent = function() {
     countryElement.appendChild(h4Element);
   }
 
-    //When the <button id="population"> element is clicked, the neighbor country with the largest population is displayed in the <main id="country"> element.
+  //When the <button id="population"> element is clicked, the neighbor country with the largest population is displayed in the <main id="country"> element.
   function createPopulationElement (country) {
     let popElement = document.createElement("div");
     popElement.innerHTML = country;
@@ -205,51 +197,7 @@ const loadEvent = function() {
   }
   
 
-
-
-
- /* function getNeighbourCountryLargestPopulation (countries) {
-    let listAllBorders = []
-    
-    countries.forEach(country => {
-      if(country.borders) {
-        let borderArray = country.borders;
-        
-        console.log(borderArray)
-        
-      }
-      
-    });
-    console.log(listAllBorders)
-
-   
-  }
-  */
-
-  /*
-  function noCountrySelected() {
-    let noCountry = document.createElement("div")
-    noCountry.innerHTML = "Select a country from the list";
-    countryElement.appendChild(noCountry)
-  }
-  */
-
-
-
-  //i tried to create an unordered List 
-  // function createUnorderedList(inputList) {
-    
-  //   const list = document.createElement("ul");
-
-  //   inputList.forEach(names => {
-  //     const li = document.createElement("li");
-  //     li.textContent = names
-  //     list.appendChild(li)
-  //   });
-    
-  //   all.appendChild(list)
-
-  // }
+ 
 
 }
 
