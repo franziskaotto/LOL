@@ -4,14 +4,19 @@ const populationBtn = document.getElementById('population');
 const areaBtn = document.getElementById('area');
 const previousBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
+let visitedCountries = [];
+
+//console.log(visitedCountries);
 
 window.onload = loadEvent();
 
 function loadEvent() {
     createCountryOptions();
-    displayDetails();
+    dropDownMenu();
     makePopButtonClickable();
     makeAreaBtnClickable();
+    makePrevBtnClickable();
+    makeNextBtnClickable();
 }
 
 function createCountryOptions() {
@@ -36,41 +41,46 @@ function hideButtons() {
   populationBtn.style.visibility= 'hidden';
   areaBtn.style.visibility = 'hidden';
   previousBtn.style.visibility = 'hidden';
-  nextBtn.style.visibility = 'hidden';
+  nextBtn.style.visibility = 'hidden'; 
 }
 
 function displayButtons() {
   populationBtn.style.visibility= 'visible';
   areaBtn.style.visibility = 'visible';
-  previousBtn.style.visibility = 'visible';
-  nextBtn.style.visibility = 'visible';
 }
 
 function displayDetails() {
+  let country = getSelectedCountry();
+
+  mainElement.innerHTML = null;
+
+  let flag = document.createElement("img");
+  flag.src = country["flags"]["png"];
+  mainElement.appendChild(flag);
+
+  let commonName = document.createElement("h1");
+  commonName.innerHTML = country["name"]["common"];
+  mainElement.appendChild(commonName);
+
+  let region = document.createElement("h2");
+  region.innerHTML = country["region"];
+  mainElement.appendChild(region);
+
+  let subregion = document.createElement("h3");
+  subregion.innerHTML = country["subregion"];
+  mainElement.appendChild(subregion);
+}
+
+function dropDownMenu() {
 
   selectElement.addEventListener("input", (e) => {
     //console.log(e.target.value);
     const selectedCountry = e.target.value;
     const country = countries.find((c) => c.name.common === selectedCountry);
-
+    
     if (country) {
-      mainElement.innerHTML = null;
-
-      let flag = document.createElement("img");
-      flag.src = country["flags"]["png"];
-      mainElement.appendChild(flag);
-
-      let commonName = document.createElement("h1");
-      commonName.innerHTML = country["name"]["common"];
-      mainElement.appendChild(commonName);
-
-      let region = document.createElement("h2");
-      region.innerHTML = country["region"];
-      mainElement.appendChild(region);
-
-      let subregion = document.createElement("h3");
-      subregion.innerHTML = country["subregion"];
-      mainElement.appendChild(subregion);
+      
+      displayDetails();
 
       //display buttons when country is selected
       displayButtons();
@@ -79,6 +89,13 @@ function displayDetails() {
       mainElement.innerHTML = null;       
       hideButtons();
     }
+
+    //console.log(selectedCountry);
+    visitedCountries.push(e.target.value);
+    //Prev and next buttons are visible if conditions are true
+    displayPrevAndNextBtn();
+    
+    //console.log(visitedCountries);
   })
 }
 
@@ -136,6 +153,9 @@ function makePopButtonClickable() {
       //Selected country in dropdown menu changes to neighbour with larges pop
       selectElement.value = largestNeighbour.name.common;
 
+      //Saved as visited
+      visitedCountries.push(selectElement.value);
+
       let flag = document.createElement("img");
       flag.src = largestNeighbour["flags"]["png"];
       mainElement.appendChild(flag);
@@ -154,6 +174,9 @@ function makePopButtonClickable() {
     } else {
       mainElement.innerHTML = 'No neighbouring country found.'
     }
+
+    //Prev and next buttons are visible
+    displayPrevAndNextBtn();
   })
 }
 
@@ -194,6 +217,8 @@ function makeAreaBtnClickable() {
 
         //Selected country in dropdown menu changes to neighbour with largest area 
         selectElement.value = largestAreaNeighbour.name.common;
+        //Saved as visited
+        visitedCountries.push(selectElement.value);
 
         let flag = document.createElement("img");
         flag.src = largestAreaNeighbour["flags"]["png"];
@@ -213,6 +238,9 @@ function makeAreaBtnClickable() {
       } else {
         mainElement.innerHTML = 'No neighbouring country found.'
       }
+
+      //Prev and next buttons are visible
+      displayPrevAndNextBtn();
     })
 } 
 
@@ -223,3 +251,67 @@ function getSelectedCountry() {
 
     return selectedCountry;
 }
+
+//Previous and next buttons
+//1. push selected country into empty array DONE
+//2. PREV button: indexOf selected country -1
+//    only displayed if array > 1 DONE
+//3.NEXT button: indexoF selected country +1 
+//    only displayed if array.length > 2 DONE
+//4. largest pop & area pushed into array DONE
+//5. add eventListeners
+
+function displayPrevAndNextBtn() {
+  if (visitedCountries.length > 2) {
+    nextBtn.style.visibility = 'visible';
+  } else {
+    nextBtn.style.visibility = 'hidden';
+  }
+
+  if (visitedCountries.length > 1) {
+    previousBtn.style.visibility = 'visible';
+  } else {
+    previousBtn.style.visibility = 'hidden';
+  }
+}
+
+function findCurrentIndex () {
+  let selectedCountry = getSelectedCountry();
+  let currentIndex = visitedCountries.indexOf(selectedCountry['name']['common']);
+
+  console.log(currentIndex);
+  return currentIndex;
+}
+
+function makePrevBtnClickable() {
+  previousBtn.addEventListener('click', () => {
+    //find Index
+    //i-1
+    //display details
+    let index = findCurrentIndex();
+
+    if (index > 0) {
+      //there are min. 2 elements in visitedCountries array
+      index--;
+      selectElement.value = visitedCountries[index];
+      //console.log(selectElement.value);
+      displayDetails();
+    }
+  }) 
+}
+
+function makeNextBtnClickable() {
+  nextBtn.addEventListener('click', () => {
+    let index = findCurrentIndex();
+
+    if (index > 1) {
+      index++;
+      selectElement.value = visitedCountries[index];
+      displayDetails();
+    }
+  })
+}
+
+console.log(visitedCountries);
+
+//TODO hide next button if there is no next country: index === array.length-1 - check if current country is last element in array
