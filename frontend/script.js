@@ -58,7 +58,7 @@ function createOptions(inputList) {
 
   all.addEventListener("change", (e) => {
     showOneCountry(e.target.value);
-    
+    //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_option_selected2
   });
 };
 
@@ -67,7 +67,7 @@ function showOneCountry (oneCountryName) {
   createOneCountryFromObject(oneCountryName);
 }
 
-function createOneCountryFromObject(countryName) {
+function createOneCountryFromObject (countryName) {
   let flag = [];                  //img
   let commonName = [];            //h1
   let region = [];                //h2
