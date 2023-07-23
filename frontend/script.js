@@ -1,3 +1,5 @@
+//TODO get rid of global variables 
+
 const selectElement = document.getElementById('all');
 const mainElement = document.getElementById('country');
 const populationBtn = document.getElementById('population');
@@ -17,6 +19,7 @@ function loadEvent() {
     makeAreaBtnClickable();
     makePrevBtnClickable();
     makeNextBtnClickable();
+    transDropdown();
 }
 
 function createCountryOptions() {
@@ -24,6 +27,7 @@ function createCountryOptions() {
   const initialOption = document.createElement("option");
   initialOption.value = "";
   initialOption.textContent = "Select a country from the list";
+  mainElement.innerHTML = initialOption.textContent;
   selectElement.appendChild(initialOption);
 
   //Hide buttons at init
@@ -53,22 +57,23 @@ function displayDetails() {
   let country = getSelectedCountry();
 
   mainElement.innerHTML = null;
+  if (country) {
+    let flag = document.createElement("img");
+    flag.src = country["flags"]["png"];
+    mainElement.appendChild(flag);
 
-  let flag = document.createElement("img");
-  flag.src = country["flags"]["png"];
-  mainElement.appendChild(flag);
+    let commonName = document.createElement("h1");
+    commonName.innerHTML = country["name"]["common"];
+    mainElement.appendChild(commonName);
 
-  let commonName = document.createElement("h1");
-  commonName.innerHTML = country["name"]["common"];
-  mainElement.appendChild(commonName);
+    let region = document.createElement("h2");
+    region.innerHTML = country["region"];
+    mainElement.appendChild(region);
 
-  let region = document.createElement("h2");
-  region.innerHTML = country["region"];
-  mainElement.appendChild(region);
-
-  let subregion = document.createElement("h3");
-  subregion.innerHTML = country["subregion"];
-  mainElement.appendChild(subregion);
+    let subregion = document.createElement("h3");
+    subregion.innerHTML = country["subregion"];
+    mainElement.appendChild(subregion);
+  } 
 }
 
 function dropDownMenu() {
@@ -86,7 +91,7 @@ function dropDownMenu() {
       displayButtons();
     } else {
       //Reset mainElement & hide buttons
-      mainElement.innerHTML = null;       
+      mainElement.innerHTML = "Select a country from the list";       
       hideButtons();
     }
 
@@ -261,14 +266,22 @@ function getSelectedCountry() {
 //4. largest pop & area pushed into array DONE
 //5. add eventListeners
 
-function displayPrevAndNextBtn() {
-  if (visitedCountries.length > 2) {
+
+//TODO if element has been pushed several times into array, prev and next button checks the first appearance of element 
+
+function displayPrevAndNextBtn(prevClick) {
+  let index = findCurrentIndex();
+  console.log(index);
+
+  //next button only visible, if prev button was clicked OR selectedCountry is NOT last element in visitedCountries array
+  
+  if (prevClick || selectElement.value !== visitedCountries[visitedCountries.length-1]) {
     nextBtn.style.visibility = 'visible';
   } else {
     nextBtn.style.visibility = 'hidden';
   }
 
-  if (visitedCountries.length > 1) {
+  if (visitedCountries.length > 1 && index > 0) {
     previousBtn.style.visibility = 'visible';
   } else {
     previousBtn.style.visibility = 'hidden';
@@ -279,24 +292,22 @@ function findCurrentIndex () {
   let selectedCountry = getSelectedCountry();
   let currentIndex = visitedCountries.indexOf(selectedCountry['name']['common']);
 
-  console.log(currentIndex);
   return currentIndex;
 }
 
 function makePrevBtnClickable() {
-  previousBtn.addEventListener('click', () => {
+  previousBtn.addEventListener('click', (e) => {
     //find Index
     //i-1
     //display details
     let index = findCurrentIndex();
 
-    if (index > 0) {
       //there are min. 2 elements in visitedCountries array
       index--;
       selectElement.value = visitedCountries[index];
       //console.log(selectElement.value);
       displayDetails();
-    }
+      displayPrevAndNextBtn(e)
   }) 
 }
 
@@ -304,14 +315,30 @@ function makeNextBtnClickable() {
   nextBtn.addEventListener('click', () => {
     let index = findCurrentIndex();
 
-    if (index > 1) {
       index++;
       selectElement.value = visitedCountries[index];
       displayDetails();
-    }
+      displayPrevAndNextBtn()
   })
 }
 
-console.log(visitedCountries);
 
-//TODO hide next button if there is no next country: index === array.length-1 - check if current country is last element in array
+function transDropdown() {
+  let selectedCountry = getSelectedCountry();
+  const toolBar = document.getElementById('toolbar');
+  const transElement = document.createElement('select');
+  toolBar.appendChild(transElement);
+
+  console.log(selectElement.value);
+/*   // Loop through countries to get the translation keys
+    for (let lang in selectedCountry.translations) {
+      console.log('hi');
+      let langElement = document.createElement('option');
+      langElement.value = lang;
+      langElement.textContent = lang;
+      transElement.appendChild(langElement);
+    }
+ */
+  
+}
+  
