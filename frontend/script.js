@@ -19,7 +19,8 @@ function loadEvent() {
     makeAreaBtnClickable();
     makePrevBtnClickable();
     makeNextBtnClickable();
-    transDropdown();
+    createTransDropDown();
+    selectLang();
 }
 
 function createCountryOptions() {
@@ -73,7 +74,10 @@ function displayDetails() {
     let subregion = document.createElement("h3");
     subregion.innerHTML = country["subregion"];
     mainElement.appendChild(subregion);
-  } 
+  }
+
+  //Add languages as options elements to translation dropdown
+  createLangOptions();
 }
 
 function dropDownMenu() {
@@ -93,6 +97,10 @@ function dropDownMenu() {
       //Reset mainElement & hide buttons
       mainElement.innerHTML = "Select a country from the list";       
       hideButtons();
+     
+      //Hide translation dropdown
+      let transElement = document.getElementById('translations');
+      transElement.style.visibility = 'hidden';
     }
 
     //console.log(selectedCountry);
@@ -271,7 +279,7 @@ function getSelectedCountry() {
 
 function displayPrevAndNextBtn(prevClick) {
   let index = findCurrentIndex();
-  console.log(index);
+  //console.log(index);
 
   //next button only visible, if prev button was clicked OR selectedCountry is NOT last element in visitedCountries array
   
@@ -322,23 +330,45 @@ function makeNextBtnClickable() {
   })
 }
 
-
-function transDropdown() {
-  let selectedCountry = getSelectedCountry();
+function createTransDropDown() {
   const toolBar = document.getElementById('toolbar');
-  const transElement = document.createElement('select');
+  let transElement = document.createElement('select');
+  transElement.setAttribute('id', 'translations');
   toolBar.appendChild(transElement);
 
-  console.log(selectElement.value);
-/*   // Loop through countries to get the translation keys
-    for (let lang in selectedCountry.translations) {
-      console.log('hi');
-      let langElement = document.createElement('option');
-      langElement.value = lang;
-      langElement.textContent = lang;
-      transElement.appendChild(langElement);
-    }
- */
-  
+  transElement.style.visibility = 'hidden';
 }
+
+function  createLangOptions() {
+  let selectedCountry = getSelectedCountry();
+  let transElement = document.getElementById('translations');
+  transElement.style.visibility = 'visible';
+
+  //Initial option
+  const initialOption = document.createElement("option");
+  initialOption.value = "";
+  initialOption.textContent = "Select language";
+  transElement.appendChild(initialOption);
+
+  // Loop through countries to get the translation keys
+   
+  for (lang in selectedCountry["translations"]) {
+    
+    let langElement = document.createElement('option');
+    langElement.value = lang;
+    langElement.textContent = lang;
+    transElement.appendChild(langElement);
+  } 
+}
+
+function selectLang() {
+  let selectedLang = "";
+
+  document.getElementById('translations').addEventListener('input', (e) => {
+    selectedLang = e.target.value;
+  })
+
+}
+
+
   
