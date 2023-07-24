@@ -1,14 +1,17 @@
 
-
+let toolbar;
 let all;
 let countryElement;
 let populationButton;
 let areaElement;
+let next;
+let prev;
+
 
 const loadEvent = function() {
   
   // INFO: all = getAllView(); siehe allerletzte Funktion, nur als INFO
-
+  toolbar = document.getElementById("toolbar")
   all = document.getElementById("all")
   countryElement = document.getElementById("country")
 
@@ -16,32 +19,34 @@ const loadEvent = function() {
   populationButton = document.getElementById("population");
   areaElement = document.getElementById("area");
  
+  
+  next = nextButton();
+  prev = prevButton();
+  
 
   //hide both buttons (population, area) for task 3
   populationButton.style.display = "none";
   areaElement.style.display = "none";
 
-  let noCountry = document.createElement("option")
+  let noCountry = document.createElement("option");
   noCountry.innerHTML = "Select a country from the List!";
-  all.appendChild(noCountry)
+  all.appendChild(noCountry);
   
   
-  getCommonNames(countries);
+  let names = getCommonNames(countries);
 
 };
+
 
 
 function getCommonNames(inputCountries) {
   let countryNameList = [];
   
-  
-
   inputCountries.forEach(country => {
     let names = country["name"]
     countryNameList.push(names.common)
   });
   
-
   createOptions(countryNameList)
   return countryNameList
 }
@@ -53,26 +58,17 @@ function createOptions(inputList) {
     let chooseName = document.createElement("option");
     chooseName.id = names;
     chooseName.innerHTML = names;
-    
-    
     all.appendChild(chooseName)
     createChangeEvent(inputList)
   });
-
 };
 
 function createChangeEvent (inputList) {
   
   all.addEventListener("change", (e) => {
-    
-    
     let target = e.target.value
     showOneCountry(target, inputList);
-    
-    //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_option_selected2
-    
   });
-
 }
 
 function showOneCountry (oneCountryName, inputList) {
@@ -89,6 +85,7 @@ function createOneCountryFromObject (countryName, inputList) {
   let capitalCity = [];           //h4
 
   makeButtonsVisible()
+  
   
   for(let country of countries) {
     if (country.name.common === countryName) {
@@ -127,10 +124,7 @@ function createOneCountryFromObject (countryName, inputList) {
   createH2Element(region);
   createh3Element(subRegion);
   createh4Element(capitalCity);
-
-
 }
-
 
 
 function getNeighbourCountryLargestPopulation (borders) {
@@ -209,8 +203,8 @@ function getNeighbourCountryLargestArea (borders) {
     return b.area - a.area
   })
   let largestArea = slicedObj[0].name
-  console.log(largestArea)
-  console.log(areaObject)
+  // console.log(largestArea)
+  // console.log(areaObject)
   addClickEventOnAreaButton(largestArea)
 }
 
@@ -229,6 +223,8 @@ function addClickEventOnAreaButton (largestArea) {
 function thereIsNoBorder (country) {
   let noBorder = document.createElement("div");
   noBorder.innerHTML = `${country.name.common} has no direct neighbours.`
+  noBorder.style.fontSize = "25px";
+  noBorder.style.padding =  "50px 10px 20px 30px";
   countryElement.appendChild(noBorder)
 
 }
@@ -236,6 +232,56 @@ function thereIsNoBorder (country) {
 function makeButtonsVisible() {
   populationButton = document.getElementById("population").style.display = "inline";
   areaElement = document.getElementById("area").style.display = "inline";
+}
+
+function nextButton () {
+  nextBtn = document.createElement("button");
+  nextBtn.innerHTML = "Next Country";
+  nextBtn.id = "next";
+  toolbar.appendChild(nextBtn);
+  nextBtn.addEventListener("click", (e) => {
+    console.log("Click next");
+    countryElement.innerHTML = "";
+    let selectedIndex = all.selectedIndex;
+    let nextIndex = (selectedIndex + 1) % all.options.length;
+    all.options[nextIndex].selected = true;
+    let outputNext = all.options[nextIndex].value
+    createOneCountryFromObject(outputNext)
+    if (selectedIndex < countries.length) {
+      
+      prevBtn.style.display = "inline";
+    } else {
+      countryElement.innerHTML = "";
+      nextBtn.style.display = "none";
+    }
+  })
+}
+
+function prevButton () {
+  prevBtn = document.createElement("button");
+  prevBtn.innerHTML = "Previous Country";
+  prevBtn.id = "prev";
+  toolbar.appendChild(prevBtn)
+  prevBtn.addEventListener("click", (e) => {
+    console.log("Click prev");
+    countryElement.innerHTML = "";
+
+    let selectedIndex = all.selectedIndex;
+    let prevIndex = (selectedIndex - 1) % all.options.length;
+    all.options[prevIndex].selected = true;
+    let outputPrev = all.options[prevIndex].value
+    createOneCountryFromObject(outputPrev)
+    if (selectedIndex > 1) {
+      nextBtn.style.display = "inline";
+    } else {
+      console.log("HERE")
+      countryElement.innerHTML = "";
+      prevBtn.style.display = "none";
+    }
+
+  })
+
+
 }
 
 function createFlagImageElement(flag) {
