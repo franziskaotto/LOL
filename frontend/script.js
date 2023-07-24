@@ -51,23 +51,37 @@ function createOptions(inputList) {
   // let countryElement = document.getElementById("country")
   inputList.forEach(names => {
     let chooseName = document.createElement("option");
+    chooseName.id = names;
     chooseName.innerHTML = names;
+    
+    
     all.appendChild(chooseName)
-
+    createChangeEvent(inputList)
   });
 
-  all.addEventListener("change", (e) => {
-    showOneCountry(e.target.value);
-    //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_option_selected2
-  });
 };
 
-function showOneCountry (oneCountryName) {
-  countryElement.innerHTML = ""
-  createOneCountryFromObject(oneCountryName);
+function createChangeEvent (inputList) {
+  
+  all.addEventListener("change", (e) => {
+    
+    
+    let target = e.target.value
+    showOneCountry(target, inputList);
+    
+    //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_option_selected2
+    
+  });
+
 }
 
-function createOneCountryFromObject (countryName) {
+function showOneCountry (oneCountryName, inputList) {
+  countryElement.innerHTML = ""
+  createOneCountryFromObject(oneCountryName, inputList);
+  
+}
+
+function createOneCountryFromObject (countryName, inputList) {
   let flag = [];                  //img
   let commonName = [];            //h1
   let region = [];                //h2
@@ -101,17 +115,12 @@ function createOneCountryFromObject (countryName) {
       //get borders
       if(country.borders) {
         let borderArray = country.borders;
-        getNeighbourCountryLargestPopulation(borderArray)
+        getNeighbourCountryLargestPopulation(borderArray, inputList)
+        getNeighbourCountryLargestArea (borderArray);
       } else {
         thereIsNoBorder(country)
-      }
-
-      //get neighbour with largest area
-      // if(country.area) {
-      //   let areaArray = 
-      //   getNeighbourCountryLargestArea()
-      // }
-    }
+      };
+    };
   };
   createFlagImageElement(flag);
   createH1Element(commonName);
@@ -126,6 +135,7 @@ function createOneCountryFromObject (countryName) {
 
 function getNeighbourCountryLargestPopulation (borders) {
   let populationObject= [];
+  
 
   for (let country of countries) {
     for (let border of borders ) {
@@ -133,10 +143,15 @@ function getNeighbourCountryLargestPopulation (borders) {
         let obj = {}
         obj.name = country.name.common;
         obj.pop = country.population;
+        obj.area = country.area;
         populationObject.push(obj);
+        
       }
     };
   };
+  
+
+
   let slicedObj = populationObject.slice(0);
   slicedObj.sort(function(a, b) {
     return b.pop - a.pop
@@ -152,14 +167,64 @@ function getNeighbourCountryLargestPopulation (borders) {
     
     countryElement.innerHTML = "";
     createOneCountryFromObject(highestPopulation);
+    let selectedOption = all.options[highestPopulation]
+    // console.log(selectedOption)
+    selectedOption.selected = true;
     
-    
+    //this would be the code for the Index od the highest Population
+    // inputList.forEach(element => {
+    //   if(element === highestPopulation) {
+    //     let index = inputList.indexOf(element);
+    //     console.log(index)
+       
+        
+    //   }
+      
+    // });
+
+  
   })
   return highestPopulation
   
 }
 
+function getNeighbourCountryLargestArea (borders) {
+  let areaObject= [];
+  
 
+  for (let country of countries) {
+    for (let border of borders) {
+      if (country["cca3"] === border) {
+        let obj = {}
+        obj.name = country.name.common;
+        obj.area = country.area;
+        areaObject.push(obj);
+        
+      }
+    };
+  };
+
+  let slicedObj = areaObject.slice(0);
+  slicedObj.sort(function(a, b) {
+    return b.area - a.area
+  })
+  let largestArea = slicedObj[0].name
+  console.log(largestArea)
+  console.log(areaObject)
+  addClickEventOnAreaButton(largestArea)
+}
+
+function addClickEventOnAreaButton (largestArea) {
+  let areaElement = document.getElementById("area");
+  areaElement.addEventListener("click", (e) => {
+    console.log("click happend")
+    countryElement.innerHTML = "";
+    createOneCountryFromObject(largestArea);
+    let selectedOption = all.options[largestArea]
+    // console.log(selectedOption)
+    selectedOption.selected = true;
+  })
+}
 
 function thereIsNoBorder (country) {
   let noBorder = document.createElement("div");
