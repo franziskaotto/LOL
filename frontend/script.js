@@ -9,6 +9,7 @@ function listAllCountries (countriesArr){
   const detailsE = document.getElementById("country");
   const populationBtn = document.getElementById("population");
   const areaBtn = document.getElementById("area");
+  const toolbar = document.getElementById("toolbar");
 
   populationBtn.style.display = "none"; //don't know if that is allowed??
   areaBtn.style.display = "none";
@@ -37,7 +38,11 @@ function listAllCountries (countriesArr){
       selectionE.innerHTML = `<option>${largestArea}</option>`;
       listAllCountries (LISTOFCOUNTRIES)
     })
+
+    createPreviousAndNext(toolbar, selectedCountry); //perhaps have to pass the detailsElement for filling the page function
   })
+
+  
 }
 
 function fillSelection (countriesArr, selectionE){
@@ -132,6 +137,36 @@ function getLargestNeighbourByArea(country){
     }
     return largestNeighbour;
   }
+}
+
+function createPreviousAndNext(buttonId, selectedCountry){
+  const previousBtn = document.createElement("button");
+  previousBtn.innerText = "Previous country";
+  previousBtn.setAttribute("id", "prev")
+  previousBtn.disabled = true;
+
+  const nextBtn = document.createElement("button");
+  nextBtn.innerText = "Next country";
+  nextBtn.setAttribute("id", "next")
+
+  buttonId.appendChild(previousBtn);
+  buttonId.appendChild(nextBtn);
+
+  previousBtn.addEventListener("click", ()=>{
+    chooseCountries(previousBtn, nextBtn, selectedCountry); //need to give undefined? or sthg else for the not clicked button - can check in my function, if the argument is empty (or sthg else)
+  })
+  nextBtn.addEventListener("click", ()=> {
+    chooseCountries(previousBtn, nextBtn, selectedCountry);
+  })
+}
+
+function chooseCountries(previous, next, selectedCountry){
+
+  // i need the selected country and the index in the array of list of countries
+  //then i need to write a for loop, the start position is the index of the selected country
+  //then i can go through the array and display the information 
+  LISTOFCOUNTRIES
+  
 }
 
 
