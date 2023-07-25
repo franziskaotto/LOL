@@ -7,14 +7,30 @@
 	<title>Neighbouring Countries</title>
 	<script src="data.js"></script>
 	<script src="script.js"></script>
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	
 </head>
-<body>
+<body class="p-3 mb-2 bg-dark-subtle text-emphasis-dark">
 	<nav id="toolbar">
-		<select id="all"></select>
-		<button id="population">Neighbour with the largest population</button>
-		<button id="area">Neighbour with the largest area</button>
+		<select id="all" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></select>
+
+
+		<button id="population" class="btn btn-secondary">Neighbour with the largest population</button>	
+		
+		<button id="area" class="btn btn-secondary">Neighbour with the largest area</button>
+		
+		<button id="prev" class="btn btn-secondary">Previous Country</button>
+
+		<button id="next" class="btn btn-secondary">Next Country</button>
+
 	</nav>
+	<div id="alertDiv" class="alert alert-info" role="alert"></div>
 	<main id="country"></main>
 	
+	
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </body>
 </html>

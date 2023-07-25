@@ -6,27 +6,43 @@ let populationButton;
 let areaElement;
 let next;
 let prev;
+let alertDiv;
 
 
 const loadEvent = function() {
   
   // INFO: all = getAllView(); siehe allerletzte Funktion, nur als INFO
   toolbar = document.getElementById("toolbar")
+  workOnToolbar(toolbar)
+  
+
   all = document.getElementById("all")
+
   countryElement = document.getElementById("country")
 
  
   populationButton = document.getElementById("population");
+  workOnPopButton(populationButton);
+
   areaElement = document.getElementById("area");
+  workOnAreaButton(areaElement)
  
-  
-  next = nextButton();
-  prev = prevButton();
+  alertDiv = document.getElementById("alertDiv");
+
   
 
+  //With BOOTSTRAP:
+  next = document.getElementById("next")
+  prev = document.getElementById("prev")
+  //Without BOOTSTRAP:
+  prev = prevButton();
+  next = nextButton();
+  
   //hide both buttons (population, area) for task 3
   populationButton.style.display = "none";
   areaElement.style.display = "none";
+  alertDiv.style.display = "none"
+  
 
   let noCountry = document.createElement("option");
   noCountry.innerHTML = "Select a country from the List!";
@@ -71,13 +87,13 @@ function createChangeEvent (inputList) {
   });
 }
 
-function showOneCountry (oneCountryName, inputList) {
+function showOneCountry (oneCountryName) {
   countryElement.innerHTML = ""
-  createOneCountryFromObject(oneCountryName, inputList);
+  createOneCountryFromObject(oneCountryName);
   
 }
 
-function createOneCountryFromObject (countryName, inputList) {
+function createOneCountryFromObject (countryName) {
   let flag = [];                  //img
   let commonName = [];            //h1
   let region = [];                //h2
@@ -112,7 +128,8 @@ function createOneCountryFromObject (countryName, inputList) {
       //get borders
       if(country.borders) {
         let borderArray = country.borders;
-        getNeighbourCountryLargestPopulation(borderArray, inputList)
+        
+        getNeighbourCountryLargestPopulation(borderArray)
         getNeighbourCountryLargestArea (borderArray);
       } else {
         thereIsNoBorder(country)
@@ -129,7 +146,7 @@ function createOneCountryFromObject (countryName, inputList) {
 
 function getNeighbourCountryLargestPopulation (borders) {
   let populationObject= [];
-  
+  alertDiv = document.getElementById("alertDiv").style.display = "none"
 
   for (let country of countries) {
     for (let border of borders ) {
@@ -144,8 +161,6 @@ function getNeighbourCountryLargestPopulation (borders) {
     };
   };
   
-
-
   let slicedObj = populationObject.slice(0);
   slicedObj.sort(function(a, b) {
     return b.pop - a.pop
@@ -153,30 +168,16 @@ function getNeighbourCountryLargestPopulation (borders) {
   let highestPopulation = slicedObj[0].name
   
   
-  
   //INFO: kann ich auch hier definieren, weil es sonst nicht global war
   let populationButton = document.getElementById("population");
 
   populationButton.addEventListener("click", (e) => {
-    
     countryElement.innerHTML = "";
     createOneCountryFromObject(highestPopulation);
     let selectedOption = all.options[highestPopulation]
     // console.log(selectedOption)
     selectedOption.selected = true;
     
-    //this would be the code for the Index od the highest Population
-    // inputList.forEach(element => {
-    //   if(element === highestPopulation) {
-    //     let index = inputList.indexOf(element);
-    //     console.log(index)
-       
-        
-    //   }
-      
-    // });
-
-  
   })
   return highestPopulation
   
@@ -221,24 +222,32 @@ function addClickEventOnAreaButton (largestArea) {
 }
 
 function thereIsNoBorder (country) {
-  let noBorder = document.createElement("div");
+  let noBorder = document.getElementById("alertDiv");
   noBorder.innerHTML = `${country.name.common} has no direct neighbours.`
   noBorder.style.fontSize = "25px";
-  noBorder.style.padding =  "50px 10px 20px 30px";
-  countryElement.appendChild(noBorder)
+  noBorder.style.padding =  "10px 10px 10px 30px";
+  noBorder.style.margin = "10px 10px 10px 30px"
+  noBorder.style.width = "500px"
+  
+  // countryElement.appendChild(noBorder)
 
 }
 
 function makeButtonsVisible() {
   populationButton = document.getElementById("population").style.display = "inline";
   areaElement = document.getElementById("area").style.display = "inline";
+  alertDiv = document.getElementById("alertDiv").style.display = "block"
 }
 
 function nextButton () {
-  nextBtn = document.createElement("button");
-  nextBtn.innerHTML = "Next Country";
-  nextBtn.id = "next";
-  toolbar.appendChild(nextBtn);
+  //nextBtn = document.createElement("button");
+  //nextBtn.innerHTML = "Next Country";
+  //nextBtn.id = "next";
+  //toolbar.appendChild(nextBtn);
+
+  let nextBtn = document.getElementById("next")
+  let prevBtn = document.getElementById("prev")
+  nextBtn.style.margin = "10px 10px 10px 2px";
   nextBtn.addEventListener("click", (e) => {
     console.log("Click next");
     countryElement.innerHTML = "";
@@ -258,10 +267,13 @@ function nextButton () {
 }
 
 function prevButton () {
-  prevBtn = document.createElement("button");
-  prevBtn.innerHTML = "Previous Country";
-  prevBtn.id = "prev";
-  toolbar.appendChild(prevBtn)
+  // prevBtn = document.createElement("button");
+  // prevBtn.innerHTML = "Previous Country";
+  // prevBtn.id = "prev";
+  // toolbar.appendChild(prevBtn)
+  let nextBtn = document.getElementById("next")
+  let prevBtn = document.getElementById("prev")
+  prevBtn.style.margin = "10px 2px 10px 30px";
   prevBtn.addEventListener("click", (e) => {
     console.log("Click prev");
     countryElement.innerHTML = "";
@@ -287,7 +299,9 @@ function prevButton () {
 function createFlagImageElement(flag) {
   let flagElement = document.createElement("img");
   flagElement.src = flag;
-  flagElement.style.display = "block";
+  //flagElement.style.display = "block";
+  flagElement.style.margin = "20px 10px 20px 30px";
+ 
   countryElement.appendChild(flagElement);
 };
 
@@ -295,6 +309,7 @@ function createH1Element(commonName) {
   let h1Element = document.createElement("h1");
   h1Element.innerHTML = commonName;
   h1Element.style.display = "block";
+  h1Element.style.margin = "10px 10px 10px 30px";
   countryElement.appendChild(h1Element);
 };
 
@@ -302,6 +317,7 @@ function createH2Element(region) {
   let h2Element = document.createElement("h2");
   h2Element.innerHTML = "Region: " + region;
   h2Element.style.display = "block";
+  h2Element.style.margin = "10px 10px 10px 30px";
   countryElement.appendChild(h2Element);
 };
 
@@ -309,6 +325,7 @@ function createh3Element(sub) {
   let h3Element = document.createElement("h3"); 
   h3Element.innerHTML = "Subregion: " + sub;
   h3Element.style.display = "block";
+  h3Element.style.margin = "10px 10px 10px 30px";
   countryElement.appendChild(h3Element);
 }
 
@@ -316,18 +333,28 @@ function createh4Element(capital) {
   let h4Element = document.createElement("h4");
   h4Element.innerHTML = "Capital: " + capital;
   h4Element.style.display = "block";
+  h4Element.style.margin = "10px 10px 10px 30px";
   countryElement.appendChild(h4Element);
 }
 
 
 
-  
- 
+function workOnToolbar (tool) {
+  tool.style.margin = "10px 10px 10px 30px";
+}
+
+function workOnPopButton (pop) {
+  pop.style.margin = "10px 2px 10px 10px";
+}
+
+function workOnAreaButton (area) {
+  area.style.margin = "10px 10px 10px 2px";
+}
 
 
-//INFO
+//INFO von Adrian
 // function getAllView() {
-//   //so kann ich mir ohne einer globalen Variable die root immer überalle holen
+//   //so kann ich mir ohne einer globalen Variable die root immer überall holen
   
 //   return document.getElementById("all")
 // }
