@@ -222,6 +222,11 @@ function addClickEventOnAreaButton (largestArea) {
 }
 
 function thereIsNoBorder (country) {
+  let populationButton = document.getElementById("population");
+  let areaElement = document.getElementById("area");
+  populationButton.style.display = "none";
+  areaElement.style.display = "none";
+
   let noBorder = document.getElementById("alertDiv");
   noBorder.innerHTML = `${country.name.common} has no direct neighbours.`
   noBorder.style.fontSize = "25px";
