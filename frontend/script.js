@@ -265,16 +265,6 @@ function getSelectedCountry() {
     return selectedCountry;
 }
 
-//Previous and next buttons
-//1. push selected country into empty array DONE
-//2. PREV button: indexOf selected country -1
-//    only displayed if array > 1 DONE
-//3.NEXT button: indexoF selected country +1 
-//    only displayed if array.length > 2 DONE
-//4. largest pop & area pushed into array DONE
-//5. add eventListeners
-
-
 //TODO if element has been pushed several times into array, prev and next button checks the first appearance of element 
 
 function displayPrevAndNextBtn(prevClick) {
@@ -362,11 +352,23 @@ function  createLangOptions() {
 }
 
 function selectLang() {
-  let selectedLang = "";
-
-  document.getElementById('translations').addEventListener('input', (e) => {
-    selectedLang = e.target.value;
+  const transElement = document.getElementById('translations');
+  transElement.addEventListener('input', () => {
+    updateCommonName(transElement);
   })
+}
+
+function updateCommonName(transElement) {
+  const selectedCountry = getSelectedCountry();
+  const selectedLanguage = transElement.value;
+
+  //Check if the selected language exists in the translations
+  if (selectedCountry.translations[selectedLanguage]) {
+    mainElement.querySelector('h1').innerHTML = selectedCountry.translations[selectedLanguage].common;
+  } else {
+    // If not available, display the default common name
+    mainElement.querySelector('h1').innerHTML = selectedCountry.name.common;
+  }
 
 }
 
