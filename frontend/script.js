@@ -7,8 +7,7 @@ const areaBtn = document.getElementById('area');
 const previousBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
 let visitedCountries = [];
-
-//console.log(visitedCountries);
+let selectedLanguage = "";
 
 window.onload = loadEvent();
 
@@ -20,11 +19,10 @@ function loadEvent() {
     makePrevBtnClickable();
     makeNextBtnClickable();
     createTransDropDown();
-    selectLang();
+    selectLanguage();   
 }
 
 function createCountryOptions() {
-
   const initialOption = document.createElement("option");
   initialOption.value = "";
   initialOption.textContent = "Select a country from the list";
@@ -33,6 +31,9 @@ function createCountryOptions() {
 
   //Hide buttons at init
   hideButtons();
+
+  //Sort the countries array by country names
+  countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
   
   countries.forEach((country) => {
     const optionElement = document.createElement("option");
@@ -74,6 +75,10 @@ function displayDetails() {
     let subregion = document.createElement("h3");
     subregion.innerHTML = country["subregion"];
     mainElement.appendChild(subregion);
+
+    let capital = document.createElement("h4");
+    capital.innerHTML = country["capital"];
+    mainElement.appendChild(capital);
   }
 
   //Add languages as options elements to translation dropdown
@@ -81,7 +86,6 @@ function displayDetails() {
 }
 
 function dropDownMenu() {
-
   selectElement.addEventListener("input", (e) => {
     //console.log(e.target.value);
     const selectedCountry = e.target.value;
@@ -91,8 +95,12 @@ function dropDownMenu() {
       
       displayDetails();
 
+       //Translate common name when language selected
+      updateCommonName(selectedLanguage);
+
       //display buttons when country is selected
       displayButtons();
+      
     } else {
       //Reset mainElement & hide buttons
       mainElement.innerHTML = "Select a country from the list";       
@@ -103,18 +111,14 @@ function dropDownMenu() {
       transElement.style.visibility = 'hidden';
     }
 
-    //console.log(selectedCountry);
     visitedCountries.push(e.target.value);
     //Prev and next buttons are visible if conditions are true
     displayPrevAndNextBtn();
-    
-    //console.log(visitedCountries);
   })
 }
 
 //Get country through cca3 code to display neighbouring country with largest population
 function getCountry(neighbour) {
-  
   for (let country of countries) {
     if (country['cca3'] === neighbour) {
       return country;
@@ -123,11 +127,6 @@ function getCountry(neighbour) {
 }
 
 function biggestPop(selectedCountry) {
-  //1. array of neighbours
-  //2. save temp with pop 0
-  //3. if country biggest return
-  //4. add EventListener to button
-
   let largestPopulation = 0;
   let largestNeighbour = null;
   // Check if 'borders' property exists and is an array
@@ -151,8 +150,6 @@ function makePopButtonClickable() {
   populationBtn.addEventListener('click', () => { 
     //Clear page
     mainElement.innerHTML = null;  
-
-    //console.log(getSelectedCountry());
 
     //Get selected country from dropdown menu
     let selectedCountry = getSelectedCountry();
@@ -184,10 +181,15 @@ function makePopButtonClickable() {
       let subregion = document.createElement("h3");
       subregion.innerHTML = largestNeighbour["subregion"];
       mainElement.appendChild(subregion); 
+
+      let capital = document.createElement("h4");
+      capital.innerHTML = largestNeighbour["capital"];
+      mainElement.appendChild(capital);
+
+      updateCommonName(selectedLanguage);
     } else {
       mainElement.innerHTML = 'No neighbouring country found.'
     }
-
     //Prev and next buttons are visible
     displayPrevAndNextBtn();
   })
@@ -219,13 +221,9 @@ function makeAreaBtnClickable() {
 
       //Get selected country from dropdown menu
       let selectedCountry = getSelectedCountry();
-      //console.log(largestArea(selectedCountry));
       let largestAreaNeighbour = largestArea(selectedCountry);
 
-      //console.log(largestAreaNeighbour);
-
       if (largestAreaNeighbour) {
-       // console.log('szia');
         mainElement.innerHTML = `The neighbouring country of ${selectElement.value} with the largest area is: <br> `
 
         //Selected country in dropdown menu changes to neighbour with largest area 
@@ -248,6 +246,12 @@ function makeAreaBtnClickable() {
         let subregion = document.createElement("h3");
         subregion.innerHTML = largestAreaNeighbour["subregion"];
         mainElement.appendChild(subregion); 
+
+        let capital = document.createElement("h4");
+        capital.innerHTML = largestAreaNeighbour["capital"];
+        mainElement.appendChild(capital);
+
+        updateCommonName(selectedLanguage);
       } else {
         mainElement.innerHTML = 'No neighbouring country found.'
       }
@@ -265,14 +269,10 @@ function getSelectedCountry() {
     return selectedCountry;
 }
 
-//TODO if element has been pushed several times into array, prev and next button checks the first appearance of element 
-
 function displayPrevAndNextBtn(prevClick) {
   let index = findCurrentIndex();
-  //console.log(index);
 
   //next button only visible, if prev button was clicked OR selectedCountry is NOT last element in visitedCountries array
-  
   if (prevClick || selectElement.value !== visitedCountries[visitedCountries.length-1]) {
     nextBtn.style.visibility = 'visible';
   } else {
@@ -295,27 +295,23 @@ function findCurrentIndex () {
 
 function makePrevBtnClickable() {
   previousBtn.addEventListener('click', (e) => {
-    //find Index
-    //i-1
-    //display details
     let index = findCurrentIndex();
-
       //there are min. 2 elements in visitedCountries array
       index--;
       selectElement.value = visitedCountries[index];
-      //console.log(selectElement.value);
       displayDetails();
-      displayPrevAndNextBtn(e)
+      updateCommonName(selectedLanguage);
+      displayPrevAndNextBtn(e);
   }) 
 }
 
 function makeNextBtnClickable() {
   nextBtn.addEventListener('click', () => {
     let index = findCurrentIndex();
-
       index++;
       selectElement.value = visitedCountries[index];
       displayDetails();
+      updateCommonName(selectedLanguage);
       displayPrevAndNextBtn()
   })
 }
@@ -340,10 +336,8 @@ function  createLangOptions() {
   initialOption.textContent = "Select language";
   transElement.appendChild(initialOption);
 
-  // Loop through countries to get the translation keys
-   
+  //Loop through countries to get the translation keys
   for (lang in selectedCountry["translations"]) {
-    
     let langElement = document.createElement('option');
     langElement.value = lang;
     langElement.textContent = lang;
@@ -351,16 +345,16 @@ function  createLangOptions() {
   } 
 }
 
-function selectLang() {
+function selectLanguage() {
   const transElement = document.getElementById('translations');
-  transElement.addEventListener('input', () => {
-    updateCommonName(transElement);
+  transElement.addEventListener('input', (e) => {
+    selectedLanguage = transElement.value;
+    updateCommonName(selectedLanguage);
   })
 }
 
-function updateCommonName(transElement) {
+function updateCommonName(selectedLanguage) {
   const selectedCountry = getSelectedCountry();
-  const selectedLanguage = transElement.value;
 
   //Check if the selected language exists in the translations
   if (selectedCountry.translations[selectedLanguage]) {
@@ -369,8 +363,4 @@ function updateCommonName(transElement) {
     // If not available, display the default common name
     mainElement.querySelector('h1').innerHTML = selectedCountry.name.common;
   }
-
 }
-
-
-  
