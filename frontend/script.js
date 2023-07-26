@@ -83,6 +83,7 @@ function createChangeEvent (inputList) {
   
   all.addEventListener("change", (e) => {
     let target = e.target.value
+    console.log(e)
     showOneCountry(target, inputList);
   });
 }
@@ -171,7 +172,7 @@ function getNeighbourCountryLargestPopulation (borders) {
   //INFO: kann ich auch hier definieren, weil es sonst nicht global war
   let populationButton = document.getElementById("population");
 
-  populationButton.addEventListener("click", (e) => {
+  populationButton.addEventListener("click", function (){
     countryElement.innerHTML = "";
     createOneCountryFromObject(highestPopulation);
     let selectedOption = all.options[highestPopulation]
@@ -253,7 +254,7 @@ function nextButton () {
   let nextBtn = document.getElementById("next")
   let prevBtn = document.getElementById("prev")
   nextBtn.style.margin = "10px 10px 10px 2px";
-  nextBtn.addEventListener("click", (e) => {
+  nextBtn.addEventListener("click", function () {
     console.log("Click next");
     countryElement.innerHTML = "";
     let selectedIndex = all.selectedIndex;
