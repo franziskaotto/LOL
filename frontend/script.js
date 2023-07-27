@@ -1,5 +1,3 @@
-//TODO get rid of global variables 
-
 const selectElement = document.getElementById('all');
 const mainElement = document.getElementById('country');
 const populationBtn = document.getElementById('population');
@@ -92,15 +90,12 @@ function dropDownMenu() {
     const country = countries.find((c) => c.name.common === selectedCountry);
     
     if (country) {
-      
       displayDetails();
-
        //Translate common name when language selected
       updateCommonName(selectedLanguage);
 
       //display buttons when country is selected
       displayButtons();
-      
     } else {
       //Reset mainElement & hide buttons
       mainElement.innerHTML = "Select a country from the list";       
@@ -110,7 +105,6 @@ function dropDownMenu() {
       let transElement = document.getElementById('translations');
       transElement.style.visibility = 'hidden';
     }
-
     visitedCountries.push(e.target.value);
     //Prev and next buttons are visible if conditions are true
     displayPrevAndNextBtn();
@@ -146,7 +140,6 @@ function biggestPop(selectedCountry) {
 
 //Largest population button
 function makePopButtonClickable() {
-  
   populationBtn.addEventListener('click', () => { 
     //Clear page
     mainElement.innerHTML = null;  
@@ -214,7 +207,6 @@ function largestArea(selectedCountry) {
 
  //Largest area button
 function makeAreaBtnClickable() {
-
   areaBtn.addEventListener('click', () => {
       //Clear page
       mainElement.innerHTML = null;
@@ -347,7 +339,7 @@ function  createLangOptions() {
 
 function selectLanguage() {
   const transElement = document.getElementById('translations');
-  transElement.addEventListener('input', (e) => {
+  transElement.addEventListener('input', () => {
     selectedLanguage = transElement.value;
     updateCommonName(selectedLanguage);
   })
