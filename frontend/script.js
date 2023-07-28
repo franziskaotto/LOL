@@ -111,7 +111,7 @@ function checkNavigationButtonState(prevButton, nextButton) {
     if (countryHistory.length === 0) {
         prevButton.disabled = true;
         nextButton.disabled = true;
-    }else if (currentCountryInHistory === 0 && countryHistory.length === 1) {
+    } else if (currentCountryInHistory === 0 && countryHistory.length === 1) {
         prevButton.disabled = true;
         nextButton.disabled = true;
     } else if (currentCountryInHistory === 0) {
@@ -124,8 +124,6 @@ function checkNavigationButtonState(prevButton, nextButton) {
         prevButton.disabled = false;
         nextButton.disabled = false;
     }
-   
-
 }
 
 function addToHistory() {
@@ -169,8 +167,6 @@ function goForwardInHistory() {
         console.log(`Position in History: ${currentCountryInHistory + 1} From ${countryHistory.length}`);
         return nextCountry;
     }
-
-
 }
 
 // MAIN CODE
@@ -242,10 +238,6 @@ const loadEvent = function () {
         displayCountryDetailsInMain(nextCountry, mainElement);
         checkNavigationButtonState(prevButton, nextButton);
     });
-
-
-
-
 }
 
 window.addEventListener("load", loadEvent);
