@@ -8,8 +8,8 @@ let previousBtn;
 let nextBtn;
 
 const loadEvent = function(){
-  selectE = document.getElementById("all"); //selectionE
-  mainE = document.getElementById('country'); //detailsE
+  selectE = document.getElementById("all");
+  mainE = document.getElementById('country');
   populationBtn = document.getElementById('population');
   areaBtn = document.getElementById('area');
   toolbar = document.getElementById('toolbar');
@@ -154,28 +154,22 @@ function createPreviousAndNextBtn(){
 }
 
 function previousAndNextButton(selectedCountry){
+  let index = countries.indexOf(selectedCountry);
+
   previousBtn.addEventListener("click", ()=>{
-    chooseCountries(selectedCountry);
+    fillPage(countries[index-1]);
+    selectE.innerHTML = `<option>${countries[index-1].name.common}</option>`;
+    fillSelection();
+    index --;
+    nextBtn.style.visibility = "visible";
   })
 
   nextBtn.addEventListener("click", ()=> {
-    chooseCountries(selectedCountry);
+    fillPage(countries[index+1]);
+    selectE.innerHTML = `<option>${countries[index+1].name.common}</option>`;
+    fillSelection();
+    index ++;
   })
-}
-
-function chooseCountries(selectedCountry){
-  let index = countries.indexOf(selectedCountry);
-
-  
-  for (let i = index; i < countries.length; previous){
-
-  }
-
-  // i need the selected country and the index in the array of list of countries
-  //then i need to write a for loop, the start position is the index of the selected country
-  //then i can go through the array and display the information 
-  
-  
 }
 
 //mini functions
@@ -190,7 +184,7 @@ function showButtons(){
   populationBtn.style.visibility = "visible";
   areaBtn.style.visibility = "visible";
   previousBtn.style.visibility = "visible";
-  nextBtn.style.visibility = "visible";
+  
 }
 
 function element (tag, inner) {
@@ -200,7 +194,6 @@ function element (tag, inner) {
 function flagElement(link) {
   return `<img src=${link}>`;
 }
-
 
 window.addEventListener("load", loadEvent);
 
