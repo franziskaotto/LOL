@@ -1,98 +1,99 @@
-const LISTOFCOUNTRIES = countries; //connection through index.html
+//countries for the list of countries from data.js!
+let selectE;
+let mainE;
+let populationBtn;
+let areaBtn;
+let toolbar;
+let previousBtn;
+let nextBtn;
 
-const loadEvent = function (){
-  listAllCountries (LISTOFCOUNTRIES);
+const loadEvent = function(){
+  selectE = document.getElementById("all"); //selectionE
+  mainE = document.getElementById('country'); //detailsE
+  populationBtn = document.getElementById('population');
+  areaBtn = document.getElementById('area');
+  toolbar = document.getElementById('toolbar');
+  createPreviousAndNextBtn();
+  listCountries();
 }
 
-function listAllCountries (countriesArr){
-  const selectionE = document.getElementById("all");
-  const detailsE = document.getElementById("country");
-  const populationBtn = document.getElementById("population");
-  const areaBtn = document.getElementById("area");
-  const toolbar = document.getElementById("toolbar");
+function listCountries(){
+  const initialOption = document.createElement("option");
+  initialOption.textContent = "--Select a country from the list--";
+  selectE.appendChild(initialOption);
+  hideButtons();
+  fillSelection();
 
-  populationBtn.style.display = "none"; //don't know if that is allowed??
-  areaBtn.style.display = "none";
-
-  selectionE.innerHTML = "<option>--Select a country from the list--</option>";
-  fillSelection(countriesArr, selectionE);
-
-  selectionE.addEventListener("input", (e) =>{
-    const selectedCountry = countriesArr.find(country => country.name.common === e.target.value);
-    detailsE.innerHTML = "";
-
-    if (selectedCountry){
-      fillPage(selectedCountry, detailsE);
-      populationBtn.style.display = "inline";
-      areaBtn.style.display = "inline";
-    }
+  selectE.addEventListener("input", (e) =>{
+    const selectedCountry = countries.find(country => country.name.common === e.target.value);
+    mainE.innerHTML = "";
     
-    populationBtn.addEventListener("click", (e) =>{
-      let largestPopulation = listLargestPopulation(selectedCountry, detailsE);
-      selectionE.innerHTML = `<option>${largestPopulation}</option>`;
-      listAllCountries (LISTOFCOUNTRIES)
-    })
+    if (selectedCountry){
+      fillPage(selectedCountry);
+      showButtons();
+    }
 
-    areaBtn.addEventListener("click", (e)=>{
-      let largestArea = listLargestArea(selectedCountry, detailsE);
-      selectionE.innerHTML = `<option>${largestArea}</option>`;
-      listAllCountries (LISTOFCOUNTRIES)
-    })
-
-    createPreviousAndNext(toolbar, selectedCountry); //perhaps have to pass the detailsElement for filling the page function
+    populationAndAreaButton (selectedCountry)
+    previousAndNextButton(selectedCountry);
   })
-
-  
 }
 
-function fillSelection (countriesArr, selectionE){
-  for (let country of countriesArr){
-    selectionE.insertAdjacentHTML("beforeend", element("option", country.name.common));
+function fillSelection (){
+  for (let country of countries){
+    let option = document.createElement("option");
+    option.textContent = country.name.common;
+    selectE.appendChild(option);
   }
 }
 
-function element (tag, inner) {
-  return `<${tag}>${inner}</${tag}>`;
-}
+function fillPage (selectedCountry){
+  mainE.innerHTML = "";
 
-function flagElement(link) {
-  return `<img src=${link}>`;
-}
-
-function fillPage (selectedCountry, detailsE){
-  detailsE.innerHTML = "";
-
-  detailsE.insertAdjacentHTML("beforeend", flagElement(selectedCountry.flags.png));
-  detailsE.insertAdjacentHTML("beforeend", element("h1", selectedCountry.name.common));
-  detailsE.insertAdjacentHTML("beforeend", element("h2", selectedCountry.region));
+  mainE.insertAdjacentHTML("beforeend", flagElement(selectedCountry.flags.png));
+  mainE.insertAdjacentHTML("beforeend", element("h1", selectedCountry.name.common));
+  mainE.insertAdjacentHTML("beforeend", element("h2", selectedCountry.region));
   
   if (typeof selectedCountry.subregion === "undefined"){
-    detailsE.insertAdjacentHTML("beforeend", element("h3", "There is no subregion listed."));
+    mainE.insertAdjacentHTML("beforeend", element("h3", "There is no subregion listed."));
   } else {
-    detailsE.insertAdjacentHTML("beforeend", element("h3", selectedCountry.subregion));
+    mainE.insertAdjacentHTML("beforeend", element("h3", selectedCountry.subregion));
   }
 
   if (typeof selectedCountry.capital === "undefined"){
-    detailsE.insertAdjacentHTML("beforeend", element("h4", "There is no capital listed."));
+    mainE.insertAdjacentHTML("beforeend", element("h4", "There is no capital listed."));
   } else {
-    detailsE.insertAdjacentHTML("beforeend", element("h4", selectedCountry.capital[0]));
+    mainE.insertAdjacentHTML("beforeend", element("h4", selectedCountry.capital[0]));
   }
 }
 
-function listLargestPopulation (country, detailsE){
-  if (country.hasOwnProperty("borders")){ //if there are neighbouring countries, start the search
-    let largestNeighbour = getLargestNeighbourByPopulation (country);
-    fillPage(largestNeighbour, detailsE);
+function populationAndAreaButton (selectedCountry){
+  populationBtn.addEventListener("click", () =>{
+    let largestPopulation = listLargestPopulation(selectedCountry);
+    selectE.innerHTML = `<option>${largestPopulation}</option>`;
+    listCountries();
+  })
+
+  areaBtn.addEventListener("click", ()=>{
+    let largestArea = listLargestArea(selectedCountry);
+    selectE.innerHTML = `<option>${largestArea}</option>`;
+    listCountries();
+  })
+}
+
+function listLargestPopulation (selectedCountry){
+  if (selectedCountry.hasOwnProperty("borders")){ //if there are neighbouring countries, start the search
+    let largestNeighbour = getLargestNeighbourByPopulation (selectedCountry);
+    fillPage(largestNeighbour);
     return largestNeighbour.name.common;
   }
   else  {
-    detailsE.innerHTML = "";
-    detailsE.insertAdjacentHTML("beforeend", element("h1", "Country has no neighbouring countries."));
+    mainE.innerHTML = "";
+    mainE.insertAdjacentHTML("beforeend", element("h1", "Country has no neighbouring countries."));
   }
 }
 
-function getLargestNeighbourByPopulation (country){
-  for (let neighbourCCA3 of country.borders){ //i get the cca3 of the borders array
+function getLargestNeighbourByPopulation (selectedCountry){
+  for (let neighbourCCA3 of selectedCountry.borders){ //i get the cca3 of the borders array
     let neededCountry = findCountry(neighbourCCA3);
     let tempPopulation = neededCountry.population;
     let largestNeighbour = neededCountry;
@@ -106,27 +107,27 @@ function getLargestNeighbourByPopulation (country){
 }
 
 function findCountry (cca3){
-  for (let country of LISTOFCOUNTRIES){
+  for (let country of countries){
     if (country.cca3 === cca3){ // i search with the given cca3 in the list of countries and return the needed country
       return country;
     }
   }
 }
 
-function listLargestArea(country, detailsE){
-  if (country.hasOwnProperty("borders")){ //if there are neighbouring countries, start the search
-    let largestNeighbour = getLargestNeighbourByArea (country);
-    fillPage(largestNeighbour, detailsE);
+function listLargestArea(selectedCountry){
+  if (selectedCountry.hasOwnProperty("borders")){ //if there are neighbouring countries, start the search
+    let largestNeighbour = getLargestNeighbourByArea (selectedCountry);
+    fillPage(largestNeighbour);
     return largestNeighbour.name.common;
   }
   else  {
-    detailsE.innerHTML = "";
-    detailsE.insertAdjacentHTML("beforeend", element("h1", "Country has no neighbouring countries."));
+    mainE.innerHTML = "";
+    mainE.insertAdjacentHTML("beforeend", element("h1", "Country has no neighbouring countries."));
   }
 }
 
-function getLargestNeighbourByArea(country){
-  for (let neighbourCCA3 of country.borders){ //i get the cca3 of the borders array
+function getLargestNeighbourByArea(selectedCountry){
+  for (let neighbourCCA3 of selectedCountry.borders){ //i get the cca3 of the borders array
     let neededCountry = findCountry(neighbourCCA3);
     let tempArea = neededCountry.area;
     let largestNeighbour = neededCountry;
@@ -135,40 +136,71 @@ function getLargestNeighbourByArea(country){
       largestNeighbour = neededCountry;
       tempPopulation = neededCountry.area;
     }
-    return largestNeighbour;
+  return largestNeighbour;
   }
 }
 
-function createPreviousAndNext(buttonId, selectedCountry){
-  const previousBtn = document.createElement("button");
+function createPreviousAndNextBtn(){
+  previousBtn = document.createElement("button");
   previousBtn.innerText = "Previous country";
   previousBtn.setAttribute("id", "prev")
-  previousBtn.disabled = true;
 
-  const nextBtn = document.createElement("button");
+  nextBtn = document.createElement("button");
   nextBtn.innerText = "Next country";
   nextBtn.setAttribute("id", "next")
 
-  buttonId.appendChild(previousBtn);
-  buttonId.appendChild(nextBtn);
+  toolbar.appendChild(previousBtn);
+  toolbar.appendChild(nextBtn);
+}
 
+function previousAndNextButton(selectedCountry){
   previousBtn.addEventListener("click", ()=>{
-    chooseCountries(previousBtn, nextBtn, selectedCountry); //need to give undefined? or sthg else for the not clicked button - can check in my function, if the argument is empty (or sthg else)
+    chooseCountries(selectedCountry);
   })
+
   nextBtn.addEventListener("click", ()=> {
-    chooseCountries(previousBtn, nextBtn, selectedCountry);
+    chooseCountries(selectedCountry);
   })
 }
 
-function chooseCountries(previous, next, selectedCountry){
+function chooseCountries(selectedCountry){
+  let index = countries.indexOf(selectedCountry);
+
+  
+  for (let i = index; i < countries.length; previous){
+
+  }
 
   // i need the selected country and the index in the array of list of countries
   //then i need to write a for loop, the start position is the index of the selected country
   //then i can go through the array and display the information 
-  LISTOFCOUNTRIES
+  
   
 }
 
+//mini functions
+function hideButtons(){
+  populationBtn.style.visibility = "hidden";
+  areaBtn.style.visibility = "hidden";
+  previousBtn.style.visibility = "hidden";
+  nextBtn.style.visibility = "hidden";
+}
+
+function showButtons(){
+  populationBtn.style.visibility = "visible";
+  areaBtn.style.visibility = "visible";
+  previousBtn.style.visibility = "visible";
+  nextBtn.style.visibility = "visible";
+}
+
+function element (tag, inner) {
+  return `<${tag}>${inner}</${tag}>`;
+}
+
+function flagElement(link) {
+  return `<img src=${link}>`;
+}
 
 
 window.addEventListener("load", loadEvent);
+
