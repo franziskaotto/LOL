@@ -22,6 +22,9 @@ const loadEvent = function() {
 
  
   populationButton = document.getElementById("population");
+  //console.log("TEST")
+  //console.log(populationButton)
+
   workOnPopButton(populationButton);
 
   areaElement = document.getElementById("area");
@@ -48,8 +51,7 @@ const loadEvent = function() {
   noCountry.innerHTML = "Select a country from the List!";
   all.appendChild(noCountry);
   
-  
-  let names = getCommonNames(countries);
+  createOptions(getCommonNames(countries))
 
 };
 
@@ -63,7 +65,6 @@ function getCommonNames(inputCountries) {
     countryNameList.push(names.common)
   });
   
-  createOptions(countryNameList)
   return countryNameList
 }
 
@@ -75,16 +76,16 @@ function createOptions(inputList) {
     chooseName.id = names;
     chooseName.innerHTML = names;
     all.appendChild(chooseName)
-    createChangeEvent(inputList)
   });
+
+  createChangeEvent(inputList)
 };
 
 function createChangeEvent (inputList) {
   
   all.addEventListener("change", (e) => {
     let target = e.target.value
-    console.log(e)
-    showOneCountry(target, inputList);
+    showOneCountry(target);
   });
 }
 
@@ -147,7 +148,7 @@ function createOneCountryFromObject (countryName) {
 
 function getNeighbourCountryLargestPopulation (borders) {
   let populationObject= [];
-  alertDiv = document.getElementById("alertDiv").style.display = "none"
+  alertDiv.style.display = "none"
 
   for (let country of countries) {
     for (let border of borders ) {
@@ -162,15 +163,14 @@ function getNeighbourCountryLargestPopulation (borders) {
     };
   };
   
-  let slicedObj = populationObject.slice(0);
-  slicedObj.sort(function(a, b) {
+  populationObject.sort(function(a, b) {
     return b.pop - a.pop
   })
-  let highestPopulation = slicedObj[0].name
+  let highestPopulation = populationObject[0].name
   
   
   //INFO: kann ich auch hier definieren, weil es sonst nicht global war
-  let populationButton = document.getElementById("population");
+  //let populationButton = document.getElementById("population");
 
   populationButton.addEventListener("click", function (){
     countryElement.innerHTML = "";
@@ -195,7 +195,6 @@ function getNeighbourCountryLargestArea (borders) {
         obj.name = country.name.common;
         obj.area = country.area;
         areaObject.push(obj);
-        
       }
     };
   };
@@ -211,7 +210,6 @@ function getNeighbourCountryLargestArea (borders) {
 }
 
 function addClickEventOnAreaButton (largestArea) {
-  let areaElement = document.getElementById("area");
   areaElement.addEventListener("click", (e) => {
     console.log("click happend")
     countryElement.innerHTML = "";
@@ -223,26 +221,25 @@ function addClickEventOnAreaButton (largestArea) {
 }
 
 function thereIsNoBorder (country) {
-  let populationButton = document.getElementById("population");
-  let areaElement = document.getElementById("area");
+  //let populationButton = document.getElementById("population");
+  //let areaElement = document.getElementById("area");
   populationButton.style.display = "none";
   areaElement.style.display = "none";
 
-  let noBorder = document.getElementById("alertDiv");
-  noBorder.innerHTML = `${country.name.common} has no direct neighbours.`
-  noBorder.style.fontSize = "25px";
-  noBorder.style.padding =  "10px 10px 10px 30px";
-  noBorder.style.margin = "10px 10px 10px 30px"
-  noBorder.style.width = "500px"
+  alertDiv.innerHTML = `${country.name.common} has no direct neighbours.`
+  alertDiv.style.fontSize = "25px";
+  alertDiv.style.padding =  "10px 10px 10px 30px";
+  alertDiv.style.margin = "10px 10px 10px 30px"
+  alertDiv.style.width = "500px"
   
   // countryElement.appendChild(noBorder)
 
 }
 
 function makeButtonsVisible() {
-  populationButton = document.getElementById("population").style.display = "inline";
-  areaElement = document.getElementById("area").style.display = "inline";
-  alertDiv = document.getElementById("alertDiv").style.display = "block"
+  populationButton.style.display = "inline";
+  areaElement.style.display = "inline";
+  alertDiv.style.display = "block"
 }
 
 function nextButton () {
