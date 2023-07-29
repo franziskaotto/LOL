@@ -49,7 +49,9 @@ function listCountries(){
 }
 
 function fillSelection (){
-  const countriesSorted = countries.sort((a,b) => a.name.common > b.name.common);
+  const countriesSorted = countries.sort((a,b) => {
+    return (a.name.common > b.name.common? 1 : -1);
+  })
   for (let country of countriesSorted){    
     let option = document.createElement("option");
     option.textContent = country.name.common;
