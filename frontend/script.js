@@ -25,21 +25,32 @@ function listCountries(){
   fillSelection();
 
   selectE.addEventListener("input", (e) =>{
+
     const selectedCountry = countries.find(country => country.name.common === e.target.value);
+    
     mainE.innerHTML = "";
     
     if (selectedCountry){
       fillPage(selectedCountry);
       showButtons();
+      let index = countries.indexOf(selectedCountry);
+      if(index <= 0)
+      {
+        previousBtn.style.visibility = "hidden";
+      }
+      if(index >= 248)
+      {
+        nextBtn.style.visibility = "hidden";
+      }      
     }
-
     populationAndAreaButton (selectedCountry)
     previousAndNextButton(selectedCountry);
   })
 }
 
 function fillSelection (){
-  for (let country of countries){
+  const countriesSorted = countries.sort((a,b) => a.name.common > b.name.common);
+  for (let country of countriesSorted){    
     let option = document.createElement("option");
     option.textContent = country.name.common;
     selectE.appendChild(option);
@@ -93,17 +104,17 @@ function listLargestPopulation (selectedCountry){
 }
 
 function getLargestNeighbourByPopulation (selectedCountry){
+  let largestNeighbour;
+  let tempPopulation = 0;
   for (let neighbourCCA3 of selectedCountry.borders){ //i get the cca3 of the borders array
     let neededCountry = findCountry(neighbourCCA3);
-    let tempPopulation = neededCountry.population;
-    let largestNeighbour = neededCountry;
     
     if (tempPopulation < neededCountry.population){
       largestNeighbour = neededCountry;
-      tempPopulation = neededCountry.population
-    }
-    return largestNeighbour;
+      tempPopulation = neededCountry.population;
+    }    
   }
+  return largestNeighbour;
 }
 
 function findCountry (cca3){
@@ -127,17 +138,17 @@ function listLargestArea(selectedCountry){
 }
 
 function getLargestNeighbourByArea(selectedCountry){
+  let largestNeighbour;
+  let tempArea = 0;
   for (let neighbourCCA3 of selectedCountry.borders){ //i get the cca3 of the borders array
     let neededCountry = findCountry(neighbourCCA3);
-    let tempArea = neededCountry.area;
-    let largestNeighbour = neededCountry;
     
     if (tempArea < neededCountry.area){
       largestNeighbour = neededCountry;
-      tempPopulation = neededCountry.area;
-    }
-  return largestNeighbour;
+      tempArea = neededCountry.area;
+    }  
   }
+  return largestNeighbour;
 }
 
 function createPreviousAndNextBtn(){
@@ -155,21 +166,32 @@ function createPreviousAndNextBtn(){
 
 function previousAndNextButton(selectedCountry){
   let index = countries.indexOf(selectedCountry);
+  let lastIndex = 249;
+  let firstIndex = 0;
 
-  previousBtn.addEventListener("click", ()=>{
-    fillPage(countries[index-1]);
-    selectE.innerHTML = `<option>${countries[index-1].name.common}</option>`;
-    fillSelection();
-    index --;
-    nextBtn.style.visibility = "visible";
-  })
+    previousBtn.addEventListener("click", ()=>{
+      nextBtn.style.visibility = "visible"
+      fillPage(countries[index-1]);
+      selectE.innerHTML = `<option>${countries[index-1].name.common}</option>`;
+      fillSelection();
+      index --;
+      if(index <= firstIndex)
+      {
+        previousBtn.style.visibility = "hidden";
+      }
+    })
 
-  nextBtn.addEventListener("click", ()=> {
-    fillPage(countries[index+1]);
-    selectE.innerHTML = `<option>${countries[index+1].name.common}</option>`;
-    fillSelection();
-    index ++;
-  })
+    nextBtn.addEventListener("click", ()=> {
+      previousBtn.style.visibility = "visible";
+      fillPage(countries[index+1]);
+      selectE.innerHTML = `<option>${countries[index+1].name.common}</option>`;
+      fillSelection();
+      index ++;
+      if(index >= lastIndex)
+      {
+        nextBtn.style.visibility = "hidden";
+      }
+    })  
 }
 
 //mini functions
@@ -184,6 +206,7 @@ function showButtons(){
   populationBtn.style.visibility = "visible";
   areaBtn.style.visibility = "visible";
   previousBtn.style.visibility = "visible";
+  nextBtn.style.visibility = "visible";
   
 }
 
@@ -196,4 +219,3 @@ function flagElement(link) {
 }
 
 window.addEventListener("load", loadEvent);
-
